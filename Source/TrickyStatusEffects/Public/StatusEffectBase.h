@@ -55,7 +55,6 @@ protected:
 
 	virtual void TickEffect_Implementation(float DeltaTime)
 	{
-		
 	}
 
 	UFUNCTION(BlueprintNativeEvent, Category = "StatusEffect")
@@ -68,7 +67,7 @@ protected:
 
 private:
 	virtual void Tick(float DeltaTime) override;
-	
+
 	virtual TStatId GetStatId() const override;
 
 	UPROPERTY(EditDefaultsOnly, Category="StatusEffect")
@@ -76,8 +75,13 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category="StatusEffect", meta=(ClampMin=0.0f, UIMin=0.01f))
 	float TickInterval = 0.0f;
-	
-	float TickDuration = 0.f;
+
+	float TickDuration = -1.0f;
+
+	/** The last frame number we were ticked.
+	 *  We don't want to tick multiple times per frame
+	 */
+	uint32 LastFrameNumberWeTicked = INDEX_NONE;
 
 	UPROPERTY(BlueprintGetter=GetTargetActor, Category="StatusEffect")
 	AActor* TargetActor = nullptr;

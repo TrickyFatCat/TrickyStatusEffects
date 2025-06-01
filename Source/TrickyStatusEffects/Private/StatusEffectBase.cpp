@@ -7,21 +7,29 @@
 
 void UStatusEffectBase::Tick(float DeltaTime)
 {
-	if (TickInterval <= 0.f)
+	if (LastFrameNumberWeTicked == GFrameCounter)
 	{
-		TickEffect(DeltaTime);
 		return;
 	}
 
-	if (TickDuration > 0.f)
+	if (TickInterval <= 0.f)
 	{
-		TickDuration -= DeltaTime;
+		TickEffect(DeltaTime);
 	}
 	else
 	{
-		TickDuration += TickInterval;
-		TickEffect(TickInterval);
+		if (TickDuration > 0.f)
+		{
+			TickDuration -= DeltaTime;
+		}
+		else
+		{
+			TickDuration += TickInterval;
+			TickEffect(TickInterval);
+		}
 	}
+
+	LastFrameNumberWeTicked = GFrameCounter;
 }
 
 bool UStatusEffectBase::IsTickable() const
@@ -57,13 +65,13 @@ UWorld* UStatusEffectBase::GetTickableGameObjectWorld() const
 bool UStatusEffectBase::ActivateStatusEffect(AActor* Instigator, AActor* Target)
 {
 	bool bIsSuccess = false;
-	
+
 	if (!IsValid(Target))
 	{
 		MarkAsGarbage();
 		return bIsSuccess;
 	}
-	
+
 	OwningManager = Target->GetComponentByClass<UStatusEffectsManagerComponent>();
 
 	if (!IsValid(OwningManager))
@@ -71,7 +79,7 @@ bool UStatusEffectBase::ActivateStatusEffect(AActor* Instigator, AActor* Target)
 		MarkAsGarbage();
 		return bIsSuccess;
 	}
-	
+
 	TargetActor = Target;
 	InstigatorActor = Instigator;
 	bIsSuccess = ActivateEffect();
@@ -97,7 +105,7 @@ bool UStatusEffectBase::DeactivateStatusEffect(AActor* Deactivator)
 	{
 		MarkAsGarbage();
 	}
-	
+
 	return bResult;
 }
 
