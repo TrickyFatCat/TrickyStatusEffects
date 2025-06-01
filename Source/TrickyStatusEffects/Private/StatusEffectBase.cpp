@@ -7,12 +7,26 @@
 
 void UStatusEffectBase::Tick(float DeltaTime)
 {
-	TickEffect(DeltaTime);
+	if (TickInterval <= 0.f)
+	{
+		TickEffect(DeltaTime);
+		return;
+	}
+
+	if (TickDuration > 0.f)
+	{
+		TickDuration -= DeltaTime;
+	}
+	else
+	{
+		TickDuration += TickInterval;
+		TickEffect(TickInterval);
+	}
 }
 
 bool UStatusEffectBase::IsTickable() const
 {
-	return !IsUnreachable() && !IsTemplate(RF_ClassDefaultObject);
+	return bTickEffect && !IsUnreachable() && !IsTemplate(RF_ClassDefaultObject);
 }
 
 bool UStatusEffectBase::IsTickableWhenPaused() const

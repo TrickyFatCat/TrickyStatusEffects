@@ -71,6 +71,14 @@ private:
 	
 	virtual TStatId GetStatId() const override;
 
+	UPROPERTY(EditDefaultsOnly, Category="StatusEffect")
+	bool bTickEffect = false;
+
+	UPROPERTY(EditDefaultsOnly, Category="StatusEffect", meta=(ClampMin=0.0f, UIMin=0.01f))
+	float TickInterval = 0.0f;
+	
+	float TickDuration = 0.f;
+
 	UPROPERTY(BlueprintGetter=GetTargetActor, Category="StatusEffect")
 	AActor* TargetActor = nullptr;
 
