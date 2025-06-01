@@ -7,17 +7,27 @@
 
 void UStatusEffectBase::Tick(float DeltaTime)
 {
-	TickEvent(DeltaTime);
+	TickEffect(DeltaTime);
 }
 
 bool UStatusEffectBase::IsTickable() const
 {
-	return !IsUnreachable();
+	return !IsUnreachable() && !IsTemplate(RF_ClassDefaultObject);
 }
 
 bool UStatusEffectBase::IsTickableWhenPaused() const
 {
 	return !IsUnreachable();
+}
+
+bool UStatusEffectBase::IsTickableInEditor() const
+{
+	return false;
+}
+
+ETickableTickType UStatusEffectBase::GetTickableTickType() const
+{
+	return ETickableTickType::Conditional;
 }
 
 UWorld* UStatusEffectBase::GetTickableGameObjectWorld() const
@@ -32,10 +42,12 @@ UWorld* UStatusEffectBase::GetTickableGameObjectWorld() const
 
 bool UStatusEffectBase::ActivateStatusEffect(AActor* Instigator, AActor* Target)
 {
+	bool bIsSuccess = false;
+	
 	if (!IsValid(Target))
 	{
 		MarkAsGarbage();
-		return false;
+		return bIsSuccess;
 	}
 	
 	OwningManager = Target->GetComponentByClass<UStatusEffectsManagerComponent>();
@@ -43,19 +55,19 @@ bool UStatusEffectBase::ActivateStatusEffect(AActor* Instigator, AActor* Target)
 	if (!IsValid(OwningManager))
 	{
 		MarkAsGarbage();
-		return false;
+		return bIsSuccess;
 	}
 	
 	TargetActor = Target;
 	InstigatorActor = Instigator;
-	const bool bResult = ActivationEvent();
+	bIsSuccess = ActivateEffect();
 
-	if (!bResult)
+	if (!bIsSuccess)
 	{
 		MarkAsGarbage();
 	}
 
-	return bResult;
+	return bIsSuccess;
 }
 
 bool UStatusEffectBase::DeactivateStatusEffect(AActor* Deactivator)
@@ -65,7 +77,7 @@ bool UStatusEffectBase::DeactivateStatusEffect(AActor* Deactivator)
 		return false;
 	}
 
-	const bool bResult = DeactivationEvent(Deactivator);
+	const bool bResult = DeactivateEffect(Deactivator);
 
 	if (bResult)
 	{
@@ -74,21 +86,6 @@ bool UStatusEffectBase::DeactivateStatusEffect(AActor* Deactivator)
 	
 	return bResult;
 }
-
-bool UStatusEffectBase::ActivationEvent_Implementation()
-{
-	return false;
-}
-
-void UStatusEffectBase::TickEvent_Implementation(float DeltaTime)
-{
-}
-
-bool UStatusEffectBase::DeactivationEvent_Implementation(AActor* Deactivator)
-{
-	return false;
-}
-
 
 TStatId UStatusEffectBase::GetStatId() const
 {

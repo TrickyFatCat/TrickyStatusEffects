@@ -10,7 +10,7 @@ class UStatusEffectsManagerComponent;
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class TRICKYSTATUSEFFECTS_API UStatusEffectBase : public UObject, public FTickableGameObject
 {
 	GENERATED_BODY()
@@ -20,11 +20,17 @@ public:
 
 	virtual bool IsTickableWhenPaused() const override;
 
+	virtual bool IsTickableInEditor() const override;
+
+	virtual ETickableTickType GetTickableTickType() const override;
+
 	virtual UWorld* GetTickableGameObjectWorld() const override;
 
-	virtual bool ActivateStatusEffect(AActor* Instigator, AActor* Target);
+	UFUNCTION()
+	bool ActivateStatusEffect(AActor* Instigator, AActor* Target);
 
-	virtual bool DeactivateStatusEffect(AActor* Deactivator);
+	UFUNCTION()
+	bool DeactivateStatusEffect(AActor* Deactivator);
 
 	UFUNCTION(BlueprintGetter, Category = "StatusEffects")
 	AActor* GetTargetActor() const { return TargetActor; }
@@ -37,19 +43,28 @@ public:
 
 protected:
 	UFUNCTION(BlueprintNativeEvent, Category="StatusEffect")
-	bool ActivationEvent();
+	bool ActivateEffect();
 
-	virtual bool ActivationEvent_Implementation();
-
-	UFUNCTION(BlueprintNativeEvent, Category = "StatusEffect")
-	void TickEvent(float DeltaTime);
-
-	virtual void TickEvent_Implementation(float DeltaTime);
+	virtual bool ActivateEffect_Implementation()
+	{
+		return false;
+	}
 
 	UFUNCTION(BlueprintNativeEvent, Category = "StatusEffect")
-	bool DeactivationEvent(AActor* Deactivator);
+	void TickEffect(float DeltaTime);
 
-	virtual bool DeactivationEvent_Implementation(AActor* Deactivator);
+	virtual void TickEffect_Implementation(float DeltaTime)
+	{
+		
+	}
+
+	UFUNCTION(BlueprintNativeEvent, Category = "StatusEffect")
+	bool DeactivateEffect(AActor* Deactivator);
+
+	virtual bool DeactivateEffect_Implementation(AActor* Deactivator)
+	{
+		return false;
+	}
 
 private:
 	virtual void Tick(float DeltaTime) override;
