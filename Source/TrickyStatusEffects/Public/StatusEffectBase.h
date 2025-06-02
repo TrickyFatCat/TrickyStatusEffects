@@ -16,6 +16,10 @@ enum class EStatusEffectType : uint8
 	Negative
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStatusEffectDeactivated,
+                                             UStatusEffectBase*, StatusEffect,
+                                             AActor*, Deactivator);
+
 /**
  * 
  */
@@ -25,6 +29,9 @@ class TRICKYSTATUSEFFECTS_API UStatusEffectBase : public UObject, public FTickab
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
+	FOnStatusEffectDeactivated OnStatusEffectDeactivated;
+	
 	virtual bool IsTickable() const override;
 
 	virtual bool IsTickableWhenPaused() const override;
@@ -35,11 +42,21 @@ public:
 
 	virtual UWorld* GetTickableGameObjectWorld() const override;
 
-	UFUNCTION()
 	bool ActivateStatusEffect(AActor* Instigator, AActor* Target);
 
-	UFUNCTION()
 	bool DeactivateStatusEffect(AActor* Deactivator);
+
+	UFUNCTION(BlueprintGetter, Category = "StatusEffects")
+	bool GetIsInfinite() const { return bIsInfinite; }
+
+	UFUNCTION(BlueprintGetter, Category = "StatusEffects")
+	float GetDuration() const { return Duration; }
+
+	UFUNCTION(BlueprintPure, Category = "StatusEffects")
+	float GetRemainingTime() const;
+
+	UFUNCTION(BlueprintPure, Category = "StatusEffects")
+	float GetElapsedTime() const;
 
 	UFUNCTION(BlueprintGetter, Category = "StatusEffects")
 	AActor* GetTargetActor() const { return TargetActor; }
@@ -71,7 +88,7 @@ protected:
 
 	virtual bool DeactivateEffect_Implementation(AActor* Deactivator)
 	{
-		return false;
+		return true;
 	}
 
 private:
@@ -82,7 +99,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category="Tick")
 	bool bTickEffect = false;
 
-	UPROPERTY(EditDefaultsOnly, Category="Tick", meta=(ClampMin=0.0f, UIMin=0.01f))
+	UPROPERTY(EditDefaultsOnly, Category="Tick", meta=(ClampMin=0.0f, UIMin=0.01f, EditCondition="bTickEffect"))
 	float TickInterval = 0.0f;
 
 	float TickDuration = -1.0f;
@@ -96,6 +113,15 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category="StatusEffect")
 	EStatusEffectType EffectType = EStatusEffectType::Neutral;
 
+	UPROPERTY(EditDefaultsOnly, Category="StatusEffect")
+	bool bIsInfinite = true;
+
+	UPROPERTY(EditDefaultsOnly, Category="StatusEffect", meta=(ClampMin=0.0f, UIMin=0.0f, EditCondition="!bIsInfinite"))
+	float Duration = 0.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category="StatusEffect")
+	float StatusEffectTimer = -1.0f;
+
 	UPROPERTY(BlueprintGetter=GetTargetActor, Category="StatusEffect")
 	AActor* TargetActor = nullptr;
 
@@ -104,4 +130,8 @@ private:
 
 	UPROPERTY(BlueprintGetter=GetOwningManager, Category="StatusEffect")
 	TObjectPtr<UStatusEffectsManagerComponent> OwningManager = nullptr;
+
+	void ProcessTick(float DeltaTime);
+
+	void ProcessEffectDurationTimer(float DeltaTime);
 };

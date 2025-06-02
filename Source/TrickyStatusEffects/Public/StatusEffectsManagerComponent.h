@@ -30,5 +30,8 @@ private:
 	UPROPERTY(VisibleInstanceOnly, Category="StatusEffects")
 	TArray<UStatusEffectBase*> StatusEffects;
 
-	UStatusEffectBase* GetStatusEffect(TSubclassOf<UStatusEffectBase> StatusEffect) const; 
+	UStatusEffectBase* GetStatusEffect(TSubclassOf<UStatusEffectBase> StatusEffect) const;
+
+	UFUNCTION()
+	void HandleStatusEffectDeactivated(UStatusEffectBase* StatusEffect, AActor* Deactivator);
 };

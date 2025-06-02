@@ -30,6 +30,7 @@ bool UStatusEffectsManagerComponent::ApplyStatusEffect(TSubclassOf<UStatusEffect
 	if (bIsApplied)
 	{
 		StatusEffects.Add(NewStatusEffect);
+		NewStatusEffect->OnStatusEffectDeactivated.AddUniqueDynamic(this, &UStatusEffectsManagerComponent::HandleStatusEffectDeactivated);
 	}
 
 	return bIsApplied;
@@ -37,26 +38,23 @@ bool UStatusEffectsManagerComponent::ApplyStatusEffect(TSubclassOf<UStatusEffect
 
 bool UStatusEffectsManagerComponent::RemoveStatusEffect(TSubclassOf<UStatusEffectBase> StatusEffect, AActor* Remover)
 {
+	bool bIsSuccess = false;
+	
 	if (!HasStatusEffect(StatusEffect))
 	{
-		return false;
+		return bIsSuccess;
 	}
 
 	UStatusEffectBase* TargetStatusEffect = GetStatusEffect(StatusEffect);
 
 	if (!IsValid(TargetStatusEffect))
 	{
-		return false;
+		return bIsSuccess;
 	}
 	
-	const bool bIsRemoved = TargetStatusEffect->DeactivateStatusEffect(Remover);
+	bIsSuccess = TargetStatusEffect->DeactivateStatusEffect(Remover);
 
-	if (bIsRemoved)
-	{
-		StatusEffects.Remove(TargetStatusEffect);
-	}
-
-	return bIsRemoved;
+	return bIsSuccess;
 }
 
 bool UStatusEffectsManagerComponent::HasStatusEffect(TSubclassOf<UStatusEffectBase> StatusEffect) const
@@ -87,4 +85,14 @@ UStatusEffectBase* UStatusEffectsManagerComponent::GetStatusEffect(TSubclassOf<U
 	};
 	
 	return *StatusEffects.FindByPredicate(Predicate);
+}
+
+void UStatusEffectsManagerComponent::HandleStatusEffectDeactivated(UStatusEffectBase* StatusEffect, AActor* Deactivator)
+{
+	if (!IsValid(StatusEffect) || !StatusEffects.Contains(StatusEffect))
+	{
+		return;
+	}
+	
+	StatusEffects.Remove(StatusEffect);
 }

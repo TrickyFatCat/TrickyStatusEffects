@@ -12,34 +12,19 @@ void UStatusEffectBase::Tick(float DeltaTime)
 		return;
 	}
 
-	if (TickInterval <= 0.f)
-	{
-		TickEffect(DeltaTime);
-	}
-	else
-	{
-		if (TickDuration > 0.f)
-		{
-			TickDuration -= DeltaTime;
-		}
-		else
-		{
-			TickDuration += TickInterval;
-			TickEffect(TickInterval);
-		}
-	}
-
+	ProcessEffectDurationTimer(DeltaTime);
+	ProcessTick(DeltaTime);
 	LastFrameNumberWeTicked = GFrameCounter;
 }
 
 bool UStatusEffectBase::IsTickable() const
 {
-	return bTickEffect && !IsUnreachable() && !IsTemplate(RF_ClassDefaultObject);
+	return !IsUnreachable() && !IsTemplate(RF_ClassDefaultObject);
 }
 
 bool UStatusEffectBase::IsTickableWhenPaused() const
 {
-	return !IsUnreachable();
+	return false;
 }
 
 bool UStatusEffectBase::IsTickableInEditor() const
@@ -89,6 +74,11 @@ bool UStatusEffectBase::ActivateStatusEffect(AActor* Instigator, AActor* Target)
 		MarkAsGarbage();
 	}
 
+	if (!bIsInfinite)
+	{
+		StatusEffectTimer = Duration;
+	}
+	
 	return bIsSuccess;
 }
 
@@ -103,13 +93,64 @@ bool UStatusEffectBase::DeactivateStatusEffect(AActor* Deactivator)
 
 	if (bResult)
 	{
+		OnStatusEffectDeactivated.Broadcast(this, Deactivator);
 		MarkAsGarbage();
+		OnStatusEffectDeactivated.Clear();
 	}
 
 	return bResult;
 }
 
+float UStatusEffectBase::GetRemainingTime() const
+{
+	return bIsInfinite ? -1.f : StatusEffectTimer;
+}
+
+float UStatusEffectBase::GetElapsedTime() const
+{
+	return bIsInfinite ? -1.f : FMath::Max(0.f, Duration - StatusEffectTimer);
+}
+
 TStatId UStatusEffectBase::GetStatId() const
 {
 	RETURN_QUICK_DECLARE_CYCLE_STAT(UStatusEffectBase, STATGROUP_Tickables);
+}
+
+void UStatusEffectBase::ProcessTick(float DeltaTime)
+{
+	if (!bTickEffect)
+	{
+		return;
+	}
+
+	if (TickInterval <= 0.f)
+	{
+		TickEffect(DeltaTime);
+		return;
+	}
+	
+	if (TickDuration > 0.f)
+	{
+		TickDuration -= DeltaTime;
+	}
+	else
+	{
+		TickDuration += TickInterval;
+		TickEffect(TickInterval);
+	}
+}
+
+void UStatusEffectBase::ProcessEffectDurationTimer(float DeltaTime)
+{
+	if (bIsInfinite || Duration <= 0.f) 
+	{
+		return;
+	}
+
+	StatusEffectTimer -= DeltaTime;
+
+	if (StatusEffectTimer <= 0.f)
+	{
+		DeactivateStatusEffect(nullptr);
+	}
 }
