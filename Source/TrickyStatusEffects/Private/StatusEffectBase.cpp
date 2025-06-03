@@ -78,8 +78,34 @@ bool UStatusEffectBase::Activate(AActor* Instigator, AActor* Target)
 	{
 		StatusEffectTimer = Duration;
 	}
-	
+
 	return bIsSuccess;
+}
+
+void UStatusEffectBase::Refresh()
+{
+	if (!bIsInfinite)
+	{
+		switch (TimerBehavior)
+		{
+		case EStatusEffectTimerBehavior::Ignore:
+			break;
+
+		case EStatusEffectTimerBehavior::Restart:
+			StatusEffectTimer = Duration;
+			break;
+
+		case EStatusEffectTimerBehavior::Extend:
+			StatusEffectTimer += Duration;
+			StatusEffectTimer = FMath::Min(StatusEffectTimer, MaxDuration);
+			break;
+
+		case EStatusEffectTimerBehavior::Custom:
+			break;
+		}
+	}
+
+	RefreshEffect();
 }
 
 bool UStatusEffectBase::Deactivate(AActor* Deactivator)
@@ -128,7 +154,7 @@ void UStatusEffectBase::ProcessTick(float DeltaTime)
 		TickEffect(DeltaTime);
 		return;
 	}
-	
+
 	if (TickDuration > 0.f)
 	{
 		TickDuration -= DeltaTime;
@@ -142,7 +168,7 @@ void UStatusEffectBase::ProcessTick(float DeltaTime)
 
 void UStatusEffectBase::ProcessEffectDurationTimer(float DeltaTime)
 {
-	if (bIsInfinite || Duration <= 0.f) 
+	if (bIsInfinite || Duration <= 0.f)
 	{
 		return;
 	}

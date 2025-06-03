@@ -16,6 +16,23 @@ enum class EStatusEffectType : uint8
 	Negative
 };
 
+UENUM(BlueprintType)
+enum class EStatusEffectTimerBehavior : uint8
+{
+	Ignore,
+	Restart,
+	Extend,
+	Custom
+};
+
+UENUM(BlueprintType)
+enum class EStatusEffectScope : uint8
+{
+	Unlimited,
+	OnePerTarget,
+	OnePerInstigator
+};
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStatusEffectDeactivated,
                                              UStatusEffectBase*, StatusEffect,
                                              AActor*, Deactivator);
@@ -44,16 +61,27 @@ public:
 
 	bool Activate(AActor* Instigator, AActor* Target);
 
+	void Refresh();
+
 	bool Deactivate(AActor* Deactivator);
 
 	UFUNCTION(BlueprintGetter, Category="StatusEffect")
 	EStatusEffectType GetEffectType() const { return EffectType; };
+
+	UFUNCTION(BlueprintGetter, Category="StatusEffect")
+	EStatusEffectScope GetEffectScope() const { return EffectScope; }
 
 	UFUNCTION(BlueprintGetter, Category = "StatusEffects")
 	bool GetIsInfinite() const { return bIsInfinite; }
 
 	UFUNCTION(BlueprintGetter, Category = "StatusEffects")
 	float GetDuration() const { return Duration; }
+
+	UFUNCTION(BlueprintGetter, Category = "StatusEffects")
+	EStatusEffectTimerBehavior GetTimerBehavior() const { return TimerBehavior; }
+
+	UFUNCTION(BlueprintGetter, Category = "StatusEffects")
+	float GetMaxDuration() const { return MaxDuration; }
 
 	UFUNCTION(BlueprintPure, Category = "StatusEffects")
 	float GetRemainingTime() const;
@@ -94,6 +122,13 @@ protected:
 		return true;
 	}
 
+	UFUNCTION(BlueprintNativeEvent, Category = "StatusEffect")
+	void RefreshEffect();
+
+	virtual void RefreshEffect_Implementation()
+	{
+	}
+
 private:
 	virtual void Tick(float DeltaTime) override;
 
@@ -116,6 +151,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintGetter=GetEffectType, Category="StatusEffect")
 	EStatusEffectType EffectType = EStatusEffectType::Neutral;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintGetter=GetEffectScope, Category="StatusEffect")
+	EStatusEffectScope EffectScope = EStatusEffectScope::OnePerTarget;
+
 	UPROPERTY(EditDefaultsOnly, Category="StatusEffect")
 	bool bIsInfinite = true;
 
@@ -123,10 +161,22 @@ private:
 		BlueprintGetter=GetDuration,
 		Category="StatusEffect",
 		meta=(ClampMin=0.0f, UIMin=0.0f, EditCondition="!bIsInfinite"))
-	float Duration = 0.0f;
+	float Duration = 5.0f;
 
 	UPROPERTY()
 	float StatusEffectTimer = -1.0f;
+
+	UPROPERTY(EditDefaultsOnly,
+		BlueprintGetter=GetTimerBehavior,
+		Category="StatusEffect",
+		meta=(EditCondition="!bIsInfinite"))
+	EStatusEffectTimerBehavior TimerBehavior = EStatusEffectTimerBehavior::Ignore;
+
+	UPROPERTY(EditDefaultsOnly,
+		BlueprintGetter=GetMaxDuration,
+		Category="StatusEffect",
+		meta=(ClampMin=0.0f, UIMin=0.0f, EditCondition="!bIsInfinite && TimerBehavior==EStatusEffectTimerBehavior::Extend"))
+	float MaxDuration = 10.0f;
 
 	UPROPERTY(BlueprintGetter=GetTargetActor, Category="StatusEffect")
 	AActor* TargetActor = nullptr;
