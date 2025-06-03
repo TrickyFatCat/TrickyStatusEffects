@@ -25,7 +25,7 @@ bool UStatusEffectsManagerComponent::ApplyStatusEffect(TSubclassOf<UStatusEffect
 		return false;
 	}
 
-	const bool bIsApplied = NewStatusEffect->ActivateStatusEffect(Instigator, GetOwner());
+	const bool bIsApplied = NewStatusEffect->Activate(Instigator, GetOwner());
 	
 	if (bIsApplied)
 	{
@@ -52,7 +52,7 @@ bool UStatusEffectsManagerComponent::RemoveStatusEffect(TSubclassOf<UStatusEffec
 		return bIsSuccess;
 	}
 	
-	bIsSuccess = TargetStatusEffect->DeactivateStatusEffect(Remover);
+	bIsSuccess = TargetStatusEffect->Deactivate(Remover);
 
 	return bIsSuccess;
 }

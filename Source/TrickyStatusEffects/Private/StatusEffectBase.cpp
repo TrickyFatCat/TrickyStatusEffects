@@ -47,7 +47,7 @@ UWorld* UStatusEffectBase::GetTickableGameObjectWorld() const
 	return GetOuter()->GetWorld();
 }
 
-bool UStatusEffectBase::ActivateStatusEffect(AActor* Instigator, AActor* Target)
+bool UStatusEffectBase::Activate(AActor* Instigator, AActor* Target)
 {
 	bool bIsSuccess = false;
 
@@ -82,7 +82,7 @@ bool UStatusEffectBase::ActivateStatusEffect(AActor* Instigator, AActor* Target)
 	return bIsSuccess;
 }
 
-bool UStatusEffectBase::DeactivateStatusEffect(AActor* Deactivator)
+bool UStatusEffectBase::Deactivate(AActor* Deactivator)
 {
 	if (!IsValid(this))
 	{
@@ -151,6 +151,6 @@ void UStatusEffectBase::ProcessEffectDurationTimer(float DeltaTime)
 
 	if (StatusEffectTimer <= 0.f)
 	{
-		DeactivateStatusEffect(nullptr);
+		Deactivate(nullptr);
 	}
 }

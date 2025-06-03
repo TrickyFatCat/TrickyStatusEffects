@@ -31,7 +31,7 @@ class TRICKYSTATUSEFFECTS_API UStatusEffectBase : public UObject, public FTickab
 public:
 	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
 	FOnStatusEffectDeactivated OnStatusEffectDeactivated;
-	
+
 	virtual bool IsTickable() const override;
 
 	virtual bool IsTickableWhenPaused() const override;
@@ -42,9 +42,12 @@ public:
 
 	virtual UWorld* GetTickableGameObjectWorld() const override;
 
-	bool ActivateStatusEffect(AActor* Instigator, AActor* Target);
+	bool Activate(AActor* Instigator, AActor* Target);
 
-	bool DeactivateStatusEffect(AActor* Deactivator);
+	bool Deactivate(AActor* Deactivator);
+
+	UFUNCTION(BlueprintGetter, Category="StatusEffect")
+	EStatusEffectType GetEffectType() const { return EffectType; };
 
 	UFUNCTION(BlueprintGetter, Category = "StatusEffects")
 	bool GetIsInfinite() const { return bIsInfinite; }
@@ -110,16 +113,19 @@ private:
 	 */
 	uint32 LastFrameNumberWeTicked = INDEX_NONE;
 
-	UPROPERTY(EditDefaultsOnly, Category="StatusEffect")
+	UPROPERTY(EditDefaultsOnly, BlueprintGetter=GetEffectType, Category="StatusEffect")
 	EStatusEffectType EffectType = EStatusEffectType::Neutral;
 
 	UPROPERTY(EditDefaultsOnly, Category="StatusEffect")
 	bool bIsInfinite = true;
 
-	UPROPERTY(EditDefaultsOnly, Category="StatusEffect", meta=(ClampMin=0.0f, UIMin=0.0f, EditCondition="!bIsInfinite"))
+	UPROPERTY(EditDefaultsOnly,
+		BlueprintGetter=GetDuration,
+		Category="StatusEffect",
+		meta=(ClampMin=0.0f, UIMin=0.0f, EditCondition="!bIsInfinite"))
 	float Duration = 0.0f;
 
-	UPROPERTY(EditDefaultsOnly, Category="StatusEffect")
+	UPROPERTY()
 	float StatusEffectTimer = -1.0f;
 
 	UPROPERTY(BlueprintGetter=GetTargetActor, Category="StatusEffect")
