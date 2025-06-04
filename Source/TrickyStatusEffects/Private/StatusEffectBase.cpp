@@ -111,6 +111,11 @@ bool UStatusEffectBase::Activate(AActor* Instigator, AActor* Target)
 		StatusEffectTimer = Duration;
 	}
 
+	if (bIsStackable)
+	{
+		CurrentStacks = InitialStacks;
+	}
+
 	return bIsSuccess;
 }
 
@@ -211,7 +216,7 @@ void UStatusEffectBase::RefreshTimer()
 		break;
 
 	case EStatusEffectTimerRefreshBehavior::Extend:
-		StatusEffectTimer += Duration;
+		StatusEffectTimer += DeltaDuration;
 		StatusEffectTimer = FMath::Min(StatusEffectTimer, MaxDuration);
 		break;
 	}

@@ -222,6 +222,12 @@ private:
 		Category="Duration",
 		meta=(ClampMin=0.0f, UIMin=0.0f, EditCondition="!bIsInfinite && TimerBehavior == EStatusEffectTimerRefreshBehavior::Extend"))
 	float MaxDuration = 10.0f;
+	
+	UPROPERTY(EditDefaultsOnly,
+		BlueprintGetter=GetMaxDuration,
+		Category="Duration",
+		meta=(ClampMin=0.0f, UIMin=0.0f, EditCondition="!bIsInfinite && TimerBehavior == EStatusEffectTimerRefreshBehavior::Extend"))
+	float DeltaDuration = 5.0f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintGetter=GetIsStackable, Category="Stacks")
 	bool bIsStackable = false;
@@ -239,7 +245,7 @@ private:
 	int32 MaxStacks = 5;
 
 	UPROPERTY(BlueprintGetter=GetCurrentStacks, Category="Stacks")
-	int32 CurrentStacks = 1;
+	int32 CurrentStacks = 0;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintGetter=GetStacksBehavior, Category="Stacks")
 	EStatusEffectStacksRefreshBehavior StacksBehavior = EStatusEffectStacksRefreshBehavior::Ignore;
