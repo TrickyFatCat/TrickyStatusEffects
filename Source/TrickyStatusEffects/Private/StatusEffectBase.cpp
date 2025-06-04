@@ -5,6 +5,38 @@
 
 #include "StatusEffectsManagerComponent.h"
 
+bool UStatusEffectBase::IncreaseStacks(const int32 Amount)
+{
+	if (!bIsStackable || Amount <= 0 || CurrentStacks >= MaxStacks)
+	{
+		return false;
+	}
+
+	CurrentStacks += Amount;
+	CurrentStacks = FMath::Min(CurrentStacks, MaxStacks);
+	HandleStacksIncreased(Amount);
+	return true;
+}
+
+bool UStatusEffectBase::DecreaseStacks(const int32 Amount)
+{
+	if (bIsStackable || Amount <= 0)
+	{
+		return false;
+	}
+
+	CurrentStacks -= Amount;
+	CurrentStacks = FMath::Max(CurrentStacks, 0);
+	HandleStacksDecreased(Amount);
+
+	if (CurrentStacks == 0)
+	{
+		Deactivate(nullptr);
+	}
+
+	return true;
+}
+
 void UStatusEffectBase::Tick(float DeltaTime)
 {
 	if (LastFrameNumberWeTicked == GFrameCounter)
@@ -84,27 +116,8 @@ bool UStatusEffectBase::Activate(AActor* Instigator, AActor* Target)
 
 void UStatusEffectBase::Refresh()
 {
-	if (!bIsInfinite)
-	{
-		switch (TimerBehavior)
-		{
-		case EStatusEffectTimerBehavior::Ignore:
-			break;
-
-		case EStatusEffectTimerBehavior::Restart:
-			StatusEffectTimer = Duration;
-			break;
-
-		case EStatusEffectTimerBehavior::Extend:
-			StatusEffectTimer += Duration;
-			StatusEffectTimer = FMath::Min(StatusEffectTimer, MaxDuration);
-			break;
-
-		case EStatusEffectTimerBehavior::Custom:
-			break;
-		}
-	}
-
+	RefreshTimer();
+	RefreshStacks();
 	RefreshEffect();
 }
 
@@ -178,5 +191,50 @@ void UStatusEffectBase::ProcessEffectDurationTimer(float DeltaTime)
 	if (StatusEffectTimer <= 0.f)
 	{
 		Deactivate(nullptr);
+	}
+}
+
+void UStatusEffectBase::RefreshTimer()
+{
+	if (bIsInfinite)
+	{
+		return;
+	}
+
+	switch (TimerBehavior)
+	{
+	case EStatusEffectTimerRefreshBehavior::Ignore:
+		break;
+
+	case EStatusEffectTimerRefreshBehavior::Restart:
+		StatusEffectTimer = Duration;
+		break;
+
+	case EStatusEffectTimerRefreshBehavior::Extend:
+		StatusEffectTimer += Duration;
+		StatusEffectTimer = FMath::Min(StatusEffectTimer, MaxDuration);
+		break;
+	}
+}
+
+void UStatusEffectBase::RefreshStacks()
+{
+	if (!bIsStackable)
+	{
+		return;
+	}
+
+	switch (StacksBehavior)
+	{
+	case EStatusEffectStacksRefreshBehavior::Ignore:
+		break;
+
+	case EStatusEffectStacksRefreshBehavior::Reset:
+		CurrentStacks = InitialStacks;
+		break;
+
+	case EStatusEffectStacksRefreshBehavior::Increase:
+		IncreaseStacks(DeltaStacks);
+		break;
 	}
 }
