@@ -34,9 +34,11 @@ private:
 	TArray<UStatusEffectBase*> StatusEffects;
 
 	UStatusEffectBase* GetStatusEffect(TSubclassOf<UStatusEffectBase> StatusEffect) const;
+
+	UStatusEffectBase* GetStatusEffectByInstigator(TSubclassOf<UStatusEffectBase> StatusEffect, AActor* Instigator) const;
 	
 	UFUNCTION()
 	void HandleStatusEffectDeactivated(UStatusEffectBase* StatusEffect, AActor* Deactivator);
 
-	UStatusEffectBase* CreateNewStatusEffect(TSubclassOf<UStatusEffectBase> StatusEffect, AActor* Instigator);
+	UStatusEffectBase* CreateNewStatusEffect(const TSubclassOf<UStatusEffectBase>& StatusEffect, AActor* Instigator);
 };

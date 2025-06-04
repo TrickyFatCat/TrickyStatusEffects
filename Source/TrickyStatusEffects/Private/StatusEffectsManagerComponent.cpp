@@ -19,22 +19,46 @@ UStatusEffectBase* UStatusEffectsManagerComponent::ApplyStatusEffect(TSubclassOf
 		return nullptr;
 	}
 
-	UStatusEffectBase* StatusEffectCDO = StatusEffect->GetDefaultObject<UStatusEffectBase>();
+	const UStatusEffectBase* StatusEffectCDO = StatusEffect->GetDefaultObject<UStatusEffectBase>();
+	UStatusEffectBase* TargetStatusEffect = nullptr;
 
-	if (StatusEffectCDO->GetEffectScope() == EStatusEffectScope::Unlimited)
+	switch (StatusEffectCDO->GetEffectScope())
 	{
-		return CreateNewStatusEffect(StatusEffect, Instigator);
-	}
-	
-	if (HasStatusEffect(StatusEffect))
-	{
-		UStatusEffectBase* TargetStatusEffect = GetStatusEffect(StatusEffect);
-		TargetStatusEffect->Refresh();
+	case EStatusEffectScope::PerInstance:
+		TargetStatusEffect = CreateNewStatusEffect(StatusEffect, Instigator);
+		break;
+
+	case EStatusEffectScope::PerInstigator:
+		if (!IsValid(Instigator))
+		{
+			return TargetStatusEffect;
+		}
 		
-		return TargetStatusEffect;
+		if (HasStatusEffectByInstigator(StatusEffect, Instigator))
+		{
+			TargetStatusEffect = GetStatusEffectByInstigator(StatusEffect, Instigator);
+			TargetStatusEffect->Refresh();
+		}
+		else
+		{
+			TargetStatusEffect = CreateNewStatusEffect(StatusEffect, Instigator);
+		}
+		break;
+
+	case EStatusEffectScope::PerTarget:
+		if (HasStatusEffect(StatusEffect))
+		{
+			TargetStatusEffect = GetStatusEffect(StatusEffect);
+			TargetStatusEffect->Refresh();
+		}
+		else
+		{
+			TargetStatusEffect = CreateNewStatusEffect(StatusEffect, Instigator);
+		}
+		break;
 	}
 
-	return CreateNewStatusEffect(StatusEffect, Instigator);
+	return TargetStatusEffect;
 }
 
 bool UStatusEffectsManagerComponent::RemoveStatusEffect(TSubclassOf<UStatusEffectBase> StatusEffect, AActor* Remover)
@@ -104,6 +128,23 @@ UStatusEffectBase* UStatusEffectsManagerComponent::GetStatusEffect(TSubclassOf<U
 	return *StatusEffects.FindByPredicate(Predicate);
 }
 
+UStatusEffectBase* UStatusEffectsManagerComponent::GetStatusEffectByInstigator(
+	TSubclassOf<UStatusEffectBase> StatusEffect,
+	AActor* Instigator) const
+{
+	if (!IsValid(StatusEffect))
+	{
+		return nullptr;
+	}
+
+	auto Predicate = [StatusEffect, Instigator](const UStatusEffectBase* Effect)
+	{
+		return Effect->GetInstigatorActor() == Instigator && Effect->GetClass() == StatusEffect;
+	};
+
+	return *StatusEffects.FindByPredicate(Predicate);
+}
+
 void UStatusEffectsManagerComponent::HandleStatusEffectDeactivated(UStatusEffectBase* StatusEffect, AActor* Deactivator)
 {
 	if (!IsValid(StatusEffect) || !StatusEffects.Contains(StatusEffect))
@@ -114,7 +155,7 @@ void UStatusEffectsManagerComponent::HandleStatusEffectDeactivated(UStatusEffect
 	StatusEffects.Remove(StatusEffect);
 }
 
-UStatusEffectBase* UStatusEffectsManagerComponent::CreateNewStatusEffect(TSubclassOf<UStatusEffectBase> StatusEffect,
+UStatusEffectBase* UStatusEffectsManagerComponent::CreateNewStatusEffect(const TSubclassOf<UStatusEffectBase>& StatusEffect,
                                                                          AActor* Instigator)
 {
 	if (!IsValid(StatusEffect))
