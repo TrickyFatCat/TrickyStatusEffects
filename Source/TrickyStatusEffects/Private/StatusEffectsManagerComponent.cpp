@@ -288,7 +288,7 @@ bool UStatusEffectsManagerComponent::HasStatusEffectFromInstigator(TSubclassOf<U
 
 bool UStatusEffectsManagerComponent::HasAnyStatusEffect() const
 {
-	return AppliedStatusEffects.Num > 0;
+	return AppliedStatusEffects.Num() > 0;
 }
 
 bool UStatusEffectsManagerComponent::HasAnyStatusEffectFromInstigator(AActor* Instigator) const
