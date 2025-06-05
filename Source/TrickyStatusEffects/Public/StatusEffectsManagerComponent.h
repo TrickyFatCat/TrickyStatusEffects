@@ -59,10 +59,10 @@ public:
 	                                                AActor* Instigator) const;
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffects")
-	void RefreshAllStatusEffectsOfType(EStatusEffectType StatusEffectType);
+	void RefreshAllStatusEffectsOfType(const EStatusEffectType StatusEffectType) const;
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffects")
-	void RefreshAllStatusEffectsOfTypeFromInstigator(EStatusEffectType StatusEffectType, AActor* Instigator) const;
+	void RefreshAllStatusEffectsOfTypeFromInstigator(const EStatusEffectType StatusEffectType, AActor* Instigator) const;
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffects")
 	bool RemoveStatusEffect(TSubclassOf<UStatusEffectBase> StatusEffect, AActor* Remover) const;

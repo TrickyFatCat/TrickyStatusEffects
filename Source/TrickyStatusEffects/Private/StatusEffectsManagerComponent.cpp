@@ -122,7 +122,7 @@ void UStatusEffectsManagerComponent::RefreshAllStatusEffectsOfClassFromInstigato
 	RefreshGivenStatusEffects(StatusEffects);
 }
 
-void UStatusEffectsManagerComponent::RefreshAllStatusEffectsOfType(const EStatusEffectType StatusEffectType)
+void UStatusEffectsManagerComponent::RefreshAllStatusEffectsOfType(const EStatusEffectType StatusEffectType) const
 {
 	if (AppliedStatusEffects.IsEmpty())
 	{
