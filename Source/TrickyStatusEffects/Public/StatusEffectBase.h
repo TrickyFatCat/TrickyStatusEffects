@@ -142,7 +142,13 @@ public:
 
 	UFUNCTION(BlueprintGetter, Category="StatusEffect")
 	UStatusEffectsManagerComponent* GetOwningManager() const { return OwningManager; }
+	
+	UFUNCTION(BlueprintCallable, Category="StatusEffect")
+	bool IncreaseStacks(const int32 Amount = 1);
 
+	UFUNCTION(BlueprintCallable, Category="StatusEffect")
+	bool DecreaseStacks(const int32 Amount = 1);
+	
 protected:
 	UFUNCTION(BlueprintNativeEvent, Category="StatusEffect")
 	bool ActivateEffect();
@@ -174,18 +180,12 @@ protected:
 	{
 	}
 
-	UFUNCTION(BlueprintCallable, Category="StatusEffect")
-	bool IncreaseStacks(const int32 Amount = 1);
-
 	UFUNCTION(BlueprintNativeEvent, Category="StatusEffect")
 	void HandleStacksIncreased(const int32 Amount = 1);
 
 	virtual void HandleStacksIncreased_Implementation(const int32 Amount = 1)
 	{
 	}
-
-	UFUNCTION(BlueprintCallable, Category="StatusEffect")
-	bool DecreaseStacks(const int32 Amount = 1);
 
 	UFUNCTION(BlueprintNativeEvent, Category="StatusEffect")
 	void HandleStacksDecreased(const int32 Amount = 1);
