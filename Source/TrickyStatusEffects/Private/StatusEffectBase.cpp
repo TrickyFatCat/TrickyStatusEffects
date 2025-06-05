@@ -15,6 +15,7 @@ bool UStatusEffectBase::IncreaseStacks(const int32 Amount)
 	CurrentStacks += Amount;
 	CurrentStacks = FMath::Min(CurrentStacks, MaxStacks);
 	HandleStacksIncreased(Amount);
+	OnStatusEffectStacksIncreased.Broadcast(this, CurrentStacks);
 	return true;
 }
 
@@ -28,6 +29,7 @@ bool UStatusEffectBase::DecreaseStacks(const int32 Amount)
 	CurrentStacks -= Amount;
 	CurrentStacks = FMath::Max(CurrentStacks, 0);
 	HandleStacksDecreased(Amount);
+	OnStatusEffectStacksDecreased.Broadcast(this, CurrentStacks);
 
 	if (CurrentStacks == 0)
 	{
@@ -124,6 +126,7 @@ void UStatusEffectBase::Refresh()
 	RefreshTimer();
 	RefreshStacks();
 	RefreshEffect();
+	OnStatusEffectRefreshed.Broadcast(this);
 }
 
 bool UStatusEffectBase::Deactivate(AActor* Deactivator)

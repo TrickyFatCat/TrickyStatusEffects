@@ -40,9 +40,20 @@ enum class EStatusEffectScope : uint8
 	PerInstigator
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStatusEffectDeactivated,
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnDeactivatedDynamicSignature,
                                              UStatusEffectBase*, StatusEffect,
                                              AActor*, Deactivator);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRefreshedDynamicSignature,
+                                            UStatusEffectBase*, StatusEffect);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStacksIncreasedDynamicSignature,
+                                             UStatusEffectBase*, StatusEffect,
+                                             int32, NewStacks);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStacksDecreasedDynamicSignature,
+                                             UStatusEffectBase*, StatusEffect,
+                                             int32, NewStacks);
 
 /**
  * 
@@ -54,7 +65,16 @@ class TRICKYSTATUSEFFECTS_API UStatusEffectBase : public UObject, public FTickab
 
 public:
 	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
-	FOnStatusEffectDeactivated OnStatusEffectDeactivated;
+	FOnDeactivatedDynamicSignature OnStatusEffectDeactivated;
+
+	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
+	FOnRefreshedDynamicSignature OnStatusEffectRefreshed;
+
+	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
+	FOnStacksIncreasedDynamicSignature OnStatusEffectStacksIncreased;
+
+	UPROPERTY(BlueprintAssignable, Category="StatusEffect")
+	FOnStacksDecreasedDynamicSignature OnStatusEffectStacksDecreased;
 
 	virtual bool IsTickable() const override;
 
@@ -220,13 +240,15 @@ private:
 	UPROPERTY(EditDefaultsOnly,
 		BlueprintGetter=GetMaxDuration,
 		Category="Duration",
-		meta=(ClampMin=0.0f, UIMin=0.0f, EditCondition="!bIsInfinite && TimerBehavior == EStatusEffectTimerRefreshBehavior::Extend"))
+		meta=(ClampMin=0.0f, UIMin=0.0f,
+			EditCondition="!bIsInfinite && TimerBehavior == EStatusEffectTimerRefreshBehavior::Extend"))
 	float MaxDuration = 10.0f;
-	
+
 	UPROPERTY(EditDefaultsOnly,
 		BlueprintGetter=GetMaxDuration,
 		Category="Duration",
-		meta=(ClampMin=0.0f, UIMin=0.0f, EditCondition="!bIsInfinite && TimerBehavior == EStatusEffectTimerRefreshBehavior::Extend"))
+		meta=(ClampMin=0.0f, UIMin=0.0f,
+			EditCondition="!bIsInfinite && TimerBehavior == EStatusEffectTimerRefreshBehavior::Extend"))
 	float DeltaDuration = 5.0f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintGetter=GetIsStackable, Category="Stacks")
@@ -253,7 +275,8 @@ private:
 	UPROPERTY(EditDefaultsOnly,
 		BlueprintGetter=GetDeltaStacks,
 		Category="Stacks",
-		meta=(ClampMin=1, UIMin=1, EditCondition="bIsStackable && StacksBehavior == EStatusEffectStacksRefreshBehavior::Increase"))
+		meta=(ClampMin=1, UIMin=1,
+			EditCondition="bIsStackable && StacksBehavior == EStatusEffectStacksRefreshBehavior::Increase"))
 	int32 DeltaStacks = 1;
 
 	UPROPERTY(BlueprintGetter=GetTargetActor, Category="StatusEffect")
