@@ -151,11 +151,18 @@ public:
 	
 protected:
 	UFUNCTION(BlueprintNativeEvent, Category="StatusEffect")
-	bool ActivateEffect();
+	bool CanBeActivated();
 
-	virtual bool ActivateEffect_Implementation()
+	virtual bool CanBeActivated_Implementation()
 	{
-		return false;
+		return true;
+	}
+
+	UFUNCTION(BlueprintNativeEvent, Category="StatusEffect")
+	void ActivateEffect();
+
+	virtual void ActivateEffect_Implementation()
+	{
 	}
 
 	UFUNCTION(BlueprintNativeEvent, Category="StatusEffect")

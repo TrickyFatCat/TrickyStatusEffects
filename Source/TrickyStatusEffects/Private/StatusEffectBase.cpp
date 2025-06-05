@@ -83,12 +83,10 @@ UWorld* UStatusEffectBase::GetTickableGameObjectWorld() const
 
 bool UStatusEffectBase::Activate(AActor* Instigator, AActor* Target)
 {
-	bool bIsSuccess = false;
-
 	if (!IsValid(Target))
 	{
 		MarkAsGarbage();
-		return bIsSuccess;
+		return false;
 	}
 
 	OwningManager = Target->GetComponentByClass<UStatusEffectsManagerComponent>();
@@ -96,17 +94,19 @@ bool UStatusEffectBase::Activate(AActor* Instigator, AActor* Target)
 	if (!IsValid(OwningManager))
 	{
 		MarkAsGarbage();
-		return bIsSuccess;
+		return false;
 	}
 
 	TargetActor = Target;
 	InstigatorActor = Instigator;
-	bIsSuccess = ActivateEffect();
 
-	if (!bIsSuccess)
+	if (!CanBeActivated())
 	{
 		MarkAsGarbage();
+		return false;
 	}
+
+	ActivateEffect();
 
 	if (!bIsInfinite)
 	{
@@ -118,7 +118,7 @@ bool UStatusEffectBase::Activate(AActor* Instigator, AActor* Target)
 		CurrentStacks = InitialStacks;
 	}
 
-	return bIsSuccess;
+	return true;
 }
 
 void UStatusEffectBase::Refresh()
