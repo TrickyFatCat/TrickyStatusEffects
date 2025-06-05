@@ -167,7 +167,8 @@ bool UStatusEffectsManagerComponent::RemoveStatusEffect(const TSubclassOf<UStatu
 }
 
 bool UStatusEffectsManagerComponent::RemoveStatusEffectFromInstigator(TSubclassOf<UStatusEffectBase> StatusEffect,
-                                                                      AActor* Remover, AActor* Instigator)
+                                                                      AActor* Instigator,
+                                                                      AActor* Remover)
 {
 	if (!HasStatusEffectFromInstigator(StatusEffect, Instigator))
 	{
@@ -201,8 +202,8 @@ void UStatusEffectsManagerComponent::RemoveAllStatusEffectsFromInstigator(AActor
 	RemoveGivenStatusEffects(StatusEffects, Remover);
 }
 
-void UStatusEffectsManagerComponent::RemoveAllStatusEffectsOfClass(AActor* Remover,
-                                                                   TSubclassOf<UStatusEffectBase> StatusEffect) const
+void UStatusEffectsManagerComponent::RemoveAllStatusEffectsOfClass(const TSubclassOf<UStatusEffectBase> StatusEffect,
+                                                                   AActor* Remover) const
 {
 	if (AppliedStatusEffects.IsEmpty() || !IsValid(StatusEffect))
 	{
@@ -214,10 +215,10 @@ void UStatusEffectsManagerComponent::RemoveAllStatusEffectsOfClass(AActor* Remov
 	RemoveGivenStatusEffects(StatusEffects, Remover);
 }
 
-void UStatusEffectsManagerComponent::RemoveAllStatusEffectsOfClassFromInstigator(AActor* Remover,
-	TSubclassOf<UStatusEffectBase>
-	StatusEffect,
-	AActor* Instigator) const
+void UStatusEffectsManagerComponent::RemoveAllStatusEffectsOfClassFromInstigator(
+	const TSubclassOf<UStatusEffectBase> StatusEffect,
+	AActor* Instigator,
+	AActor* Remover) const
 {
 	if (AppliedStatusEffects.IsEmpty() || !IsValid(StatusEffect))
 	{
@@ -229,7 +230,8 @@ void UStatusEffectsManagerComponent::RemoveAllStatusEffectsOfClassFromInstigator
 	RemoveGivenStatusEffects(StatusEffects, Remover);
 }
 
-void UStatusEffectsManagerComponent::RemoveAllStatusEffectsOfType(AActor* Remover, EStatusEffectType StatusEffectType)
+void UStatusEffectsManagerComponent::RemoveAllStatusEffectsOfType(const EStatusEffectType StatusEffectType,
+                                                                  AActor* Remover) const
 {
 	if (AppliedStatusEffects.IsEmpty())
 	{
@@ -241,9 +243,10 @@ void UStatusEffectsManagerComponent::RemoveAllStatusEffectsOfType(AActor* Remove
 	RemoveGivenStatusEffects(StatusEffects, Remover);
 }
 
-void UStatusEffectsManagerComponent::RemoveAllStatusEffectsOfTypeFromInstigator(AActor* Remover,
-	EStatusEffectType StatusEffectType,
-	AActor* Instigator)
+void UStatusEffectsManagerComponent::RemoveAllStatusEffectsOfTypeFromInstigator(
+	const EStatusEffectType StatusEffectType,
+	AActor* Instigator,
+	AActor* Remover) const
 {
 	if (AppliedStatusEffects.IsEmpty())
 	{

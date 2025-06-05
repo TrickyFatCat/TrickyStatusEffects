@@ -56,43 +56,44 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffects")
 	void RefreshAllStatusEffectsOfClassFromInstigator(TSubclassOf<UStatusEffectBase> StatusEffect,
-	                                                AActor* Instigator) const;
+	                                                  AActor* Instigator) const;
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffects")
 	void RefreshAllStatusEffectsOfType(const EStatusEffectType StatusEffectType) const;
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffects")
-	void RefreshAllStatusEffectsOfTypeFromInstigator(const EStatusEffectType StatusEffectType, AActor* Instigator) const;
+	void RefreshAllStatusEffectsOfTypeFromInstigator(const EStatusEffectType StatusEffectType,
+	                                                 AActor* Instigator) const;
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffects")
 	bool RemoveStatusEffect(TSubclassOf<UStatusEffectBase> StatusEffect, AActor* Remover) const;
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffects")
 	bool RemoveStatusEffectFromInstigator(TSubclassOf<UStatusEffectBase> StatusEffect,
-	                                    AActor* Remover,
-	                                    AActor* Instigator);
+	                                      AActor* Instigator,
+	                                      AActor* Remover);
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffects")
 	void RemoveAllStatusEffects(AActor* Remover);
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffects")
-	void RemoveAllStatusEffectsFromInstigator(AActor* Remover, AActor* Instigator) const;
+	void RemoveAllStatusEffectsFromInstigator(AActor* Instigator, AActor* Remover) const;
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffects")
-	void RemoveAllStatusEffectsOfClass(AActor* Remover, TSubclassOf<UStatusEffectBase> StatusEffect) const;
+	void RemoveAllStatusEffectsOfClass(TSubclassOf<UStatusEffectBase> StatusEffect, AActor* Remover) const;
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffects")
-	void RemoveAllStatusEffectsOfClassFromInstigator(AActor* Remover,
-	                                               TSubclassOf<UStatusEffectBase> StatusEffect,
-	                                               AActor* Instigator) const;
+	void RemoveAllStatusEffectsOfClassFromInstigator(TSubclassOf<UStatusEffectBase> StatusEffect,
+	                                                 AActor* Instigator,
+	                                                 AActor* Remover) const;
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffects")
-	void RemoveAllStatusEffectsOfType(AActor* Remover, EStatusEffectType StatusEffectType);
+	void RemoveAllStatusEffectsOfType(const EStatusEffectType StatusEffectType, AActor* Remover) const;
 
 	UFUNCTION(BlueprintCallable, Category="StatusEffects")
-	void RemoveAllStatusEffectsOfTypeFromInstigator(AActor* Remover,
-	                                              EStatusEffectType StatusEffectType,
-	                                              AActor* Instigator);
+	void RemoveAllStatusEffectsOfTypeFromInstigator(const EStatusEffectType StatusEffectType,
+	                                                AActor* Instigator,
+	                                                AActor* Remover) const;
 
 	UFUNCTION(BlueprintPure, Category="StatusEffects")
 	bool HasStatusEffect(TSubclassOf<UStatusEffectBase> StatusEffect) const;
@@ -117,7 +118,7 @@ public:
 
 	UFUNCTION(BlueprintPure, Category="StatusEffects")
 	UStatusEffectBase* GetStatusEffectFromInstigator(TSubclassOf<UStatusEffectBase> StatusEffect,
-	                                               AActor* Instigator) const;
+	                                                 AActor* Instigator) const;
 
 	UFUNCTION(BlueprintPure, Category="StatusEffects")
 	void GetAllStatusEffects(TArray<UStatusEffectBase*>& OutStatusEffects) const;
@@ -131,8 +132,8 @@ public:
 
 	UFUNCTION(BlueprintPure, Category="StatusEffects")
 	void GetAllStatusEffectsOfClassFromInstigator(TArray<UStatusEffectBase*>& OutStatusEffects,
-	                                            TSubclassOf<UStatusEffectBase> StatusEffect,
-	                                            AActor* Instigator) const;
+	                                              TSubclassOf<UStatusEffectBase> StatusEffect,
+	                                              AActor* Instigator) const;
 
 
 	UFUNCTION(BlueprintPure, Category="StatusEffects")
@@ -141,8 +142,8 @@ public:
 
 	UFUNCTION(BlueprintPure, Category="StatusEffects")
 	void GetAllStatusEffectsOfTypeFromInstigator(TArray<UStatusEffectBase*>& OutStatusEffects,
-	                                           EStatusEffectType StatusEffectType,
-	                                           AActor* Instigator) const;
+	                                             EStatusEffectType StatusEffectType,
+	                                             AActor* Instigator) const;
 
 private:
 	UPROPERTY(VisibleInstanceOnly, Category="StatusEffects")
