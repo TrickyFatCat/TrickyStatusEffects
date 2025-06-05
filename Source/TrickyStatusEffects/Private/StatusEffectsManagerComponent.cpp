@@ -163,7 +163,8 @@ bool UStatusEffectsManagerComponent::RemoveStatusEffect(const TSubclassOf<UStatu
 		return false;
 	}
 
-	return TargetStatusEffect->Deactivate(Remover);
+	TargetStatusEffect->Deactivate(Remover);
+	return true;
 }
 
 bool UStatusEffectsManagerComponent::RemoveStatusEffectFromInstigator(TSubclassOf<UStatusEffectBase> StatusEffect,
@@ -182,7 +183,8 @@ bool UStatusEffectsManagerComponent::RemoveStatusEffectFromInstigator(TSubclassO
 		return false;
 	}
 
-	return TargetStatusEffect->Deactivate(Remover);
+	TargetStatusEffect->Deactivate(Remover);
+	return true;
 }
 
 void UStatusEffectsManagerComponent::RemoveAllStatusEffects(AActor* Remover)

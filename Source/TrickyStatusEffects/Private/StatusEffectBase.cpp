@@ -129,23 +129,17 @@ void UStatusEffectBase::Refresh()
 	OnStatusEffectRefreshed.Broadcast(this);
 }
 
-bool UStatusEffectBase::Deactivate(AActor* Deactivator)
+void UStatusEffectBase::Deactivate(AActor* Deactivator)
 {
 	if (!IsValid(this))
 	{
-		return false;
+		return;
 	}
 
-	const bool bResult = DeactivateEffect(Deactivator);
-
-	if (bResult)
-	{
-		OnStatusEffectDeactivated.Broadcast(this, Deactivator);
-		MarkAsGarbage();
-		OnStatusEffectDeactivated.Clear();
-	}
-
-	return bResult;
+	DeactivateEffect(Deactivator);
+	OnStatusEffectDeactivated.Broadcast(this, Deactivator);
+	MarkAsGarbage();
+	OnStatusEffectDeactivated.Clear();
 }
 
 float UStatusEffectBase::GetRemainingTime() const

@@ -90,7 +90,7 @@ public:
 
 	void Refresh();
 
-	bool Deactivate(AActor* Deactivator);
+	void Deactivate(AActor* Deactivator);
 
 	UFUNCTION(BlueprintGetter, Category="StatusEffect")
 	EStatusEffectType GetEffectType() const { return EffectType; };
@@ -166,11 +166,10 @@ protected:
 	}
 
 	UFUNCTION(BlueprintNativeEvent, Category="StatusEffect")
-	bool DeactivateEffect(AActor* Deactivator);
+	void DeactivateEffect(AActor* Deactivator);
 
-	virtual bool DeactivateEffect_Implementation(AActor* Deactivator)
+	virtual void DeactivateEffect_Implementation(AActor* Deactivator)
 	{
-		return true;
 	}
 
 	UFUNCTION(BlueprintNativeEvent, Category="StatusEffect")
