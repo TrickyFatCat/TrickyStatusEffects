@@ -104,7 +104,7 @@ bool UStatusEffectBase::Activate(UStatusEffectsManagerComponent* TargetManagerCo
 
 	if (!bIsInfinite)
 	{
-		StatusEffectTimer = Duration;
+		RemainingDuration = Duration;
 	}
 
 	if (bIsStackable)
@@ -187,17 +187,17 @@ void UStatusEffectBase::ProcessTick(float DeltaTime)
 
 void UStatusEffectBase::ProcessEffectDurationTimer(float DeltaTime)
 {
-	if (bIsInfinite || Duration <= 0.f || StatusEffectTimer <= 0.f)
+	if (bIsInfinite || Duration <= 0.f || RemainingDuration <= 0.f)
 	{
 		return;
 	}
 
-	StatusEffectTimer -= DeltaTime;
+	RemainingDuration -= DeltaTime;
 
-	if (StatusEffectTimer <= 0.f)
+	if (RemainingDuration <= 0.f)
 	{
 		Deactivate(nullptr);
-		StatusEffectTimer = -1.f;
+		RemainingDuration = -1.f;
 	}
 }
 
@@ -214,12 +214,12 @@ void UStatusEffectBase::RefreshTimer()
 		break;
 
 	case EStatusEffectTimerRefreshBehavior::Reset:
-		StatusEffectTimer = Duration;
+		RemainingDuration = Duration;
 		break;
 
 	case EStatusEffectTimerRefreshBehavior::Extend:
-		StatusEffectTimer += DeltaDuration;
-		StatusEffectTimer = FMath::Min(StatusEffectTimer, MaxDuration);
+		RemainingDuration += DeltaDuration;
+		RemainingDuration = FMath::Min(RemainingDuration, MaxDuration);
 		break;
 	}
 }
