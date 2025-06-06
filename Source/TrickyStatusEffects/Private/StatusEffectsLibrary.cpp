@@ -4,6 +4,7 @@
 #include "StatusEffectsLibrary.h"
 
 #include "StatusEffectsManagerComponent.h"
+#include "StatusEffectBase.h"
 
 UStatusEffectsManagerComponent* UStatusEffectsLibrary::GetStatusEffectsManager(AActor* Target)
 {

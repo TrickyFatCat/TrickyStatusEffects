@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
+#include "Engine/Engine.h"
+#include "Tickable.h"
 #include "StatusEffectBase.generated.h"
 
 class UStatusEffectsManagerComponent;
@@ -58,7 +60,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStacksDecreasedDynamicSignature,
 /**
  * 
  */
-UCLASS(Blueprintable, BlueprintType)
+UCLASS(Blueprintable, BlueprintType, Abstract, HideDropdown)
 class TRICKYSTATUSEFFECTS_API UStatusEffectBase : public UObject, public FTickableGameObject
 {
 	GENERATED_BODY()
@@ -86,7 +88,7 @@ public:
 
 	virtual UWorld* GetTickableGameObjectWorld() const override;
 
-	bool Activate(AActor* Instigator, AActor* Target);
+	bool Activate(AActor* Target, AActor* Instigator);
 
 	void Refresh();
 

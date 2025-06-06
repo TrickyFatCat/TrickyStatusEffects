@@ -2,6 +2,7 @@
 
 
 #include "StatusEffectBase.h"
+#include "GameFramework/Actor.h"
 
 #include "StatusEffectsManagerComponent.h"
 
@@ -81,7 +82,7 @@ UWorld* UStatusEffectBase::GetTickableGameObjectWorld() const
 	return GetOuter()->GetWorld();
 }
 
-bool UStatusEffectBase::Activate(AActor* Instigator, AActor* Target)
+bool UStatusEffectBase::Activate(AActor* Target, AActor* Instigator)
 {
 	if (!IsValid(Target))
 	{
