@@ -14,8 +14,8 @@ UENUM(BlueprintType)
 enum class EStatusEffectType : uint8
 {
 	Neutral,
-	Positive,
-	Negative
+	Buff,
+	Debuff
 };
 
 UENUM(BlueprintType)
