@@ -240,7 +240,7 @@ private:
 	float Duration = 5.0f;
 
 	UPROPERTY()
-	float StatusEffectTimer = -1.0f;
+	float RemainingDuration = -1.0f;
 
 	UPROPERTY(EditDefaultsOnly,
 		BlueprintGetter=GetTimerBehavior,

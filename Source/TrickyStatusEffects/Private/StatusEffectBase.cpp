@@ -138,12 +138,22 @@ void UStatusEffectBase::Deactivate(AActor* Deactivator)
 
 float UStatusEffectBase::GetRemainingTime() const
 {
-	return bIsInfinite ? -1.f : StatusEffectTimer;
+	return bIsInfinite ? -1.f : RemainingDuration;
 }
 
 float UStatusEffectBase::GetElapsedTime() const
 {
-	return bIsInfinite ? -1.f : FMath::Max(0.f, Duration - StatusEffectTimer);
+	if (bIsInfinite)
+	{
+		return -1.f;
+	}
+
+	if (TimerBehavior == EStatusEffectTimerRefreshBehavior::Extend)
+	{
+		return FMath::Max(0.f, MaxDuration - RemainingDuration);
+	}
+
+	return FMath::Max(0.f, Duration - RemainingDuration);
 }
 
 TStatId UStatusEffectBase::GetStatId() const
