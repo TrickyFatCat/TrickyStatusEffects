@@ -3,7 +3,6 @@
 
 #include "StatusEffectBase.h"
 #include "GameFramework/Actor.h"
-
 #include "StatusEffectsManagerComponent.h"
 
 bool UStatusEffectBase::IncreaseStacks(const int32 Amount)
@@ -54,7 +53,8 @@ void UStatusEffectBase::Tick(float DeltaTime)
 
 bool UStatusEffectBase::IsTickable() const
 {
-	return !IsUnreachable() && !IsTemplate(RF_ClassDefaultObject);
+	const bool bCanEverTick = bTickEffect || !bIsInfinite && Duration > 0.f;
+	return bCanEverTick && !IsUnreachable() && !IsTemplate(RF_ClassDefaultObject) && IsValid(this);
 }
 
 bool UStatusEffectBase::IsTickableWhenPaused() const
@@ -184,7 +184,7 @@ void UStatusEffectBase::ProcessTick(float DeltaTime)
 
 void UStatusEffectBase::ProcessEffectDurationTimer(float DeltaTime)
 {
-	if (bIsInfinite || Duration <= 0.f)
+	if (bIsInfinite || Duration <= 0.f || StatusEffectTimer <= 0.f)
 	{
 		return;
 	}
@@ -194,6 +194,7 @@ void UStatusEffectBase::ProcessEffectDurationTimer(float DeltaTime)
 	if (StatusEffectTimer <= 0.f)
 	{
 		Deactivate(nullptr);
+		StatusEffectTimer = -1.f;
 	}
 }
 
