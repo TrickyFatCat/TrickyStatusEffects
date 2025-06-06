@@ -203,7 +203,7 @@ void UStatusEffectBase::RefreshTimer()
 	case EStatusEffectTimerRefreshBehavior::Ignore:
 		break;
 
-	case EStatusEffectTimerRefreshBehavior::Restart:
+	case EStatusEffectTimerRefreshBehavior::Reset:
 		StatusEffectTimer = Duration;
 		break;
 

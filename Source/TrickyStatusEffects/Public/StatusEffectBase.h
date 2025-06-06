@@ -22,7 +22,7 @@ UENUM(BlueprintType)
 enum class EStatusEffectTimerRefreshBehavior : uint8
 {
 	Ignore,
-	Restart,
+	Reset,
 	Extend
 };
 
