@@ -82,23 +82,16 @@ UWorld* UStatusEffectBase::GetTickableGameObjectWorld() const
 	return GetOuter()->GetWorld();
 }
 
-bool UStatusEffectBase::Activate(AActor* Target, AActor* Instigator)
+bool UStatusEffectBase::Activate(UStatusEffectsManagerComponent* TargetManagerComponent, AActor* Instigator)
 {
-	if (!IsValid(Target))
+	if (!IsValid(TargetManagerComponent) || !IsValid(TargetManagerComponent->GetOwner()))
 	{
 		MarkAsGarbage();
 		return false;
 	}
 
-	OwningManager = Target->GetComponentByClass<UStatusEffectsManagerComponent>();
-
-	if (!IsValid(OwningManager))
-	{
-		MarkAsGarbage();
-		return false;
-	}
-
-	TargetActor = Target;
+	OwningManager = TargetManagerComponent;
+	TargetActor = TargetManagerComponent->GetOwner();
 	InstigatorActor = Instigator;
 
 	if (!CanBeActivated())

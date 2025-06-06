@@ -506,7 +506,7 @@ UStatusEffectBase* UStatusEffectsManagerComponent::CreateNewStatusEffect(
 		return nullptr;
 	}
 
-	const bool bIsApplied = NewStatusEffect->Activate(GetOwner(), Instigator);
+	const bool bIsApplied = NewStatusEffect->Activate(this, Instigator);
 
 	if (!bIsApplied)
 	{

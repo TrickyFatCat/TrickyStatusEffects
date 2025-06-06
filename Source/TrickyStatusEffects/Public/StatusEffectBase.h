@@ -88,7 +88,7 @@ public:
 
 	virtual UWorld* GetTickableGameObjectWorld() const override;
 
-	bool Activate(AActor* Target, AActor* Instigator);
+	bool Activate(UStatusEffectsManagerComponent* TargetManagerComponent, AActor* Instigator);
 
 	void Refresh();
 
