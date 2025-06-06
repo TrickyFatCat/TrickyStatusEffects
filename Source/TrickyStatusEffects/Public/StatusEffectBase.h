@@ -112,6 +112,9 @@ public:
 	UFUNCTION(BlueprintGetter, Category="StatusEffect")
 	float GetMaxDuration() const { return MaxDuration; }
 
+	UFUNCTION(BlueprintGetter, Category="StatusEffect")
+	float GetDeltaDuration() const { return DeltaDuration; }
+
 	UFUNCTION(BlueprintPure, Category="StatusEffect")
 	float GetRemainingTime() const;
 
@@ -253,7 +256,7 @@ private:
 	float MaxDuration = 10.0f;
 
 	UPROPERTY(EditDefaultsOnly,
-		BlueprintGetter=GetMaxDuration,
+		BlueprintGetter=GetDeltaDuration,
 		Category="Duration",
 		meta=(ClampMin=0.0f, UIMin=0.0f,
 			EditCondition="!bIsInfinite && TimerBehavior == EStatusEffectTimerRefreshBehavior::Extend"))
