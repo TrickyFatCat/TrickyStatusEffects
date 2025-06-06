@@ -55,8 +55,8 @@ public:
 	virtual void OnComponentDestroyed(bool bDestroyingHierarchy) override;
 
 	/**
-	 * Applies a status effect.
-	 * If the effect is already applied and its scope is not PerInstance, it will refresh it.
+	 * Applies a status effect
+	 * If the effect is already applied and its scope is not PerInstance, it will refresh it
 	 *
 	 * @param StatusEffect The class of the status effect to be applied
 	 * @param Instigator The actor which applied a status effect. Can be nullptr
@@ -72,7 +72,7 @@ public:
 	void RefreshAllStatusEffects();
 
 	/**
-	 * Refreshes all applied status effects of the specified class.
+	 * Refreshes all applied status effects of the specified class
 	 *
 	 * @param StatusEffect The class of the status effects to be refreshed
 	 */
@@ -80,7 +80,7 @@ public:
 	void RefreshAllStatusEffectsOfClass(TSubclassOf<UStatusEffectBase> StatusEffect) const;
 
 	/**
-	 * Refreshes all status effects applied by a specified instigator.
+	 * Refreshes all status effects applied by a specified instigator
 	 *
 	 * @param Instigator The actor which applied status effects. Can be nullptr
 	 */
@@ -88,17 +88,17 @@ public:
 	void RefreshAllStatusEffectsFromInstigator(AActor* Instigator) const;
 
 	/**
-	 * Refreshes all active status effects of a specified class that were applied by a specified instigator.
+	 * Refreshes all active status effects of a specified class that were applied by a specified instigator
 	 *
-	 * @param StatusEffect The class of the status effects to be refreshed.
-	 * @param Instigator The actor which applied status effects. Can be nullptr.
+	 * @param StatusEffect The class of the status effects to be refreshed
+	 * @param Instigator The actor which applied status effects. Can be nullptr
 	 */
 	UFUNCTION(BlueprintCallable, Category="StatusEffects")
 	void RefreshAllStatusEffectsOfClassFromInstigator(TSubclassOf<UStatusEffectBase> StatusEffect,
 	                                                  AActor* Instigator) const;
 
 	/**
-	 * Refreshes all applied status effects of the specific type.
+	 * Refreshes all applied status effects of the specific type
 	 *
 	 * @param StatusEffectType The type of status effects to refresh
 	 */
@@ -106,7 +106,7 @@ public:
 	void RefreshAllStatusEffectsOfType(const EStatusEffectType StatusEffectType) const;
 
 	/**
-	 * Refreshes all active status effects of the specific type that were applied by a specified instigator.
+	 * Refreshes all active status effects of the specific type that were applied by a specified instigator
 	 *
 	 * @param StatusEffectType The type of status effects to refresh.
 	 * @param Instigator The actor which applied the status effects. Can be nullptr
