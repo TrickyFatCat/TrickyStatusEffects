@@ -10,6 +10,8 @@
 
 class UStatusEffectsManagerComponent;
 
+DECLARE_LOG_CATEGORY_EXTERN(LogStatusEffect, Log, All)
+
 /**
  * Represents status effect type
  */
@@ -492,4 +494,14 @@ private:
 	void RefreshTimer();
 
 	void RefreshStacks();
+
+#if WITH_EDITOR && !UE_BUILD_SHIPPING
+	static void PrintLog(const FString& Message);
+
+	static void PrintWarning(const FString& Message);
+
+	static void PrintError(const FString& Message);
+
+	static void GetActorName(AActor* Actor, FString& OutName);
+#endif 
 };

@@ -5,6 +5,8 @@
 #include "GameFramework/Actor.h"
 #include "StatusEffectsManagerComponent.h"
 
+DEFINE_LOG_CATEGORY(LogStatusEffect)
+
 bool UStatusEffectBase::IncreaseStacks(const int32 Amount)
 {
 	if (!bIsStackable || Amount <= 0 || CurrentStacks >= MaxStacks)
@@ -14,6 +16,13 @@ bool UStatusEffectBase::IncreaseStacks(const int32 Amount)
 
 	CurrentStacks += Amount;
 	CurrentStacks = FMath::Min(CurrentStacks, MaxStacks);
+
+#if WITH_EDITOR && !UE_BUILD_SHIPPING
+	const FString Message = FString::Printf(
+		TEXT("%s stacks increased by %d. Current stacks: %d"), *GetName(), Amount, CurrentStacks);
+	PrintLog(Message);
+#endif
+
 	HandleStacksIncreased(Amount);
 	OnStatusEffectStacksIncreased.Broadcast(this, CurrentStacks);
 	return true;
@@ -28,11 +37,23 @@ bool UStatusEffectBase::DecreaseStacks(const int32 Amount)
 
 	CurrentStacks -= Amount;
 	CurrentStacks = FMath::Max(CurrentStacks, 0);
+
+#if WITH_EDITOR && !UE_BUILD_SHIPPING
+	FString Message = FString::Printf(
+		TEXT("%s stacks decreased by %d. Current stacks: %d"), *GetName(), Amount, CurrentStacks);
+	PrintLog(Message);
+#endif
+
 	HandleStacksDecreased(Amount);
 	OnStatusEffectStacksDecreased.Broadcast(this, CurrentStacks);
 
 	if (CurrentStacks == 0)
 	{
+#if WITH_EDITOR && !UE_BUILD_SHIPPING
+		Message = FString::Printf(TEXT("%s stacks reached 0. Deactivation initiated"), *GetName());
+		PrintLog(Message);
+#endif
+
 		Deactivate(nullptr);
 	}
 
@@ -86,6 +107,12 @@ bool UStatusEffectBase::Activate(UStatusEffectsManagerComponent* TargetManagerCo
 {
 	if (!IsValid(TargetManagerComponent) || !IsValid(TargetManagerComponent->GetOwner()))
 	{
+#if WITH_EDITOR && !UE_BUILD_SHIPPING
+		const FString Message = FString::Printf(
+			TEXT("%s activation failed. Target is invalid. Outer: %s"), *GetName(), *GetOuter()->GetName());
+		PrintError(Message);
+#endif
+
 		MarkAsGarbage();
 		return false;
 	}
@@ -96,6 +123,12 @@ bool UStatusEffectBase::Activate(UStatusEffectsManagerComponent* TargetManagerCo
 
 	if (!CanBeActivated())
 	{
+#if WITH_EDITOR && !UE_BUILD_SHIPPING
+		const FString Message = FString::Printf(
+			TEXT("%s activation failed. CanBeActivated() check failed."), *GetName());
+		PrintLog(Message);
+#endif
+
 		MarkAsGarbage();
 		return false;
 	}
@@ -112,6 +145,19 @@ bool UStatusEffectBase::Activate(UStatusEffectsManagerComponent* TargetManagerCo
 		CurrentStacks = InitialStacks;
 	}
 
+#if WITH_EDITOR && !UE_BUILD_SHIPPING
+	FString TargetName, InstigatorName;
+	GetActorName(TargetActor, TargetName);
+	GetActorName(InstigatorActor, InstigatorName);
+	const FString Message = FString::Printf(
+		TEXT("%s activation success. Target: %s | Instigator: %s | Duration: %.2f sec | Stacks: %d"),
+		*GetName(),
+		*TargetName,
+		*InstigatorName,
+		Duration,
+		CurrentStacks);
+	PrintLog(Message);
+#endif
 	return true;
 }
 
@@ -131,6 +177,23 @@ void UStatusEffectBase::Deactivate(AActor* Deactivator)
 	}
 
 	DeactivateEffect(Deactivator);
+
+#if WITH_EDITOR && !UE_BUILD_SHIPPING
+	FString TargetName, InstigatorName, DeactivatorName;
+	GetActorName(TargetActor, TargetName);
+	GetActorName(InstigatorActor, InstigatorName);
+	GetActorName(Deactivator, DeactivatorName);
+	const FString Message = FString::Printf(
+		TEXT("%s deactivated by %s. Target: %s | Instigator: %s | RemainingTime: %.2f sec | RemainingStacks: %d"),
+		*GetName(),
+		*DeactivatorName,
+		*TargetName,
+		*InstigatorName,
+		GetRemainingTime(),
+		CurrentStacks);
+	PrintLog(Message);
+#endif
+
 	OnStatusEffectDeactivated.Broadcast(this, Deactivator);
 	MarkAsGarbage();
 	OnStatusEffectDeactivated.Clear();
@@ -211,15 +274,36 @@ void UStatusEffectBase::RefreshTimer()
 	switch (TimerBehavior)
 	{
 	case EStatusEffectTimerRefreshBehavior::Ignore:
+		{
+		}
 		break;
 
 	case EStatusEffectTimerRefreshBehavior::Reset:
-		RemainingDuration = Duration;
+		{
+			RemainingDuration = Duration;
+
+#if WITH_EDITOR && !UE_BUILD_SHIPPING
+			const FString Message = FString::Printf(TEXT("%s timer refreshed. Remaining time: %.2f sec"),
+			                                        *GetName(),
+			                                        RemainingDuration);
+			PrintLog(Message);
+#endif
+		}
 		break;
 
 	case EStatusEffectTimerRefreshBehavior::Extend:
-		RemainingDuration += DeltaDuration;
-		RemainingDuration = FMath::Min(RemainingDuration, MaxDuration);
+		{
+			RemainingDuration += DeltaDuration;
+			RemainingDuration = FMath::Min(RemainingDuration, MaxDuration);
+
+#if WITH_EDITOR && !UE_BUILD_SHIPPING
+			const FString Message = FString::Printf(TEXT("%s timer extended by %.2f sec. Remaining time: %.2f sec"),
+			                                        *GetName(),
+			                                        DeltaDuration,
+			                                        RemainingDuration);
+			PrintLog(Message);
+#endif
+		}
 		break;
 	}
 }
@@ -234,14 +318,48 @@ void UStatusEffectBase::RefreshStacks()
 	switch (StacksBehavior)
 	{
 	case EStatusEffectStacksRefreshBehavior::Ignore:
+		{
+		}
 		break;
 
 	case EStatusEffectStacksRefreshBehavior::Reset:
-		CurrentStacks = InitialStacks;
+		{
+			CurrentStacks = InitialStacks;
+
+#if WITH_EDITOR && !UE_BUILD_SHIPPING
+			const FString Message = FString::Printf(
+				TEXT("%s stacks reset. Remaining stacks: %d"), *GetName(), CurrentStacks);
+			PrintLog(Message);
+#endif
+		}
 		break;
 
 	case EStatusEffectStacksRefreshBehavior::Increase:
-		IncreaseStacks(DeltaStacks);
+		{
+			IncreaseStacks(DeltaStacks);
+		}
 		break;
 	}
 }
+
+#if WITH_EDITOR && !UE_BUILD_SHIPPING
+void UStatusEffectBase::PrintLog(const FString& Message)
+{
+	UE_LOG(LogStatusEffect, Log, TEXT("%s"), *Message);
+}
+
+void UStatusEffectBase::PrintWarning(const FString& Message)
+{
+	UE_LOG(LogStatusEffect, Warning, TEXT("%s"), *Message);
+}
+
+void UStatusEffectBase::PrintError(const FString& Message)
+{
+	UE_LOG(LogStatusEffect, Error, TEXT("%s"), *Message);
+}
+
+void UStatusEffectBase::GetActorName(AActor* Actor, FString& OutName)
+{
+	OutName = IsValid(Actor) ? Actor->GetActorNameOrLabel() : TEXT("NULL");
+}
+#endif
