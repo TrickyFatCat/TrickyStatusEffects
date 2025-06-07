@@ -149,7 +149,7 @@ void UStatusEffectsManagerComponent::RefreshAllStatusEffectsOfTypeFromInstigator
 }
 
 bool UStatusEffectsManagerComponent::RemoveStatusEffect(const TSubclassOf<UStatusEffectBase> StatusEffect,
-                                                        AActor* Remover) const
+                                                        AActor* Remover) 
 {
 	if (!HasStatusEffect(StatusEffect))
 	{

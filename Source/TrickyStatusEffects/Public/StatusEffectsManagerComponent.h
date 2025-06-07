@@ -123,7 +123,7 @@ public:
 	 * @return True if the status effect was successfully removed
 	 */
 	UFUNCTION(BlueprintCallable, Category="StatusEffects")
-	bool RemoveStatusEffect(TSubclassOf<UStatusEffectBase> StatusEffect, AActor* Remover) const;
+	bool RemoveStatusEffect(TSubclassOf<UStatusEffectBase> StatusEffect, AActor* Remover);
 
 	/**
 	 * Removes a specified status effect applied by a specified instigator.

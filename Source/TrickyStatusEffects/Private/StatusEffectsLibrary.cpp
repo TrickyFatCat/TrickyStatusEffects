@@ -150,7 +150,7 @@ bool UStatusEffectsLibrary::RemoveStatusEffect(AActor* Target,
 		return false;
 	}
 
-	const UStatusEffectsManagerComponent* StatusEffectsManager = GetStatusEffectsManager(Target);
+	UStatusEffectsManagerComponent* StatusEffectsManager = GetStatusEffectsManager(Target);
 
 	if (!IsValid(StatusEffectsManager))
 	{
