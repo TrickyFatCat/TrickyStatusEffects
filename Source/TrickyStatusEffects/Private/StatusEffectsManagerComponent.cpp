@@ -37,35 +37,41 @@ UStatusEffectBase* UStatusEffectsManagerComponent::ApplyStatusEffect(TSubclassOf
 	switch (StatusEffectCDO->GetEffectScope())
 	{
 	case EStatusEffectScope::PerInstance:
-		TargetStatusEffect = CreateNewStatusEffect(StatusEffect, Instigator);
+		{
+			TargetStatusEffect = CreateNewStatusEffect(StatusEffect, Instigator);
+		}
 		break;
 
 	case EStatusEffectScope::PerInstigator:
-		if (!IsValid(Instigator))
 		{
-			return TargetStatusEffect;
-		}
+			if (!IsValid(Instigator))
+			{
+				return TargetStatusEffect;
+			}
 
-		if (HasStatusEffectFromInstigator(StatusEffect, Instigator))
-		{
-			TargetStatusEffect = GetStatusEffectFromInstigator(StatusEffect, Instigator);
-			TargetStatusEffect->Refresh();
-		}
-		else
-		{
-			TargetStatusEffect = CreateNewStatusEffect(StatusEffect, Instigator);
+			if (HasStatusEffectFromInstigator(StatusEffect, Instigator))
+			{
+				TargetStatusEffect = GetStatusEffectFromInstigator(StatusEffect, Instigator);
+				TargetStatusEffect->Refresh();
+			}
+			else
+			{
+				TargetStatusEffect = CreateNewStatusEffect(StatusEffect, Instigator);
+			}
 		}
 		break;
 
 	case EStatusEffectScope::PerTarget:
-		if (HasStatusEffect(StatusEffect))
 		{
-			TargetStatusEffect = GetStatusEffect(StatusEffect);
-			TargetStatusEffect->Refresh();
-		}
-		else
-		{
-			TargetStatusEffect = CreateNewStatusEffect(StatusEffect, Instigator);
+			if (HasStatusEffect(StatusEffect))
+			{
+				TargetStatusEffect = GetStatusEffect(StatusEffect);
+				TargetStatusEffect->Refresh();
+			}
+			else
+			{
+				TargetStatusEffect = CreateNewStatusEffect(StatusEffect, Instigator);
+			}
 		}
 		break;
 	}
