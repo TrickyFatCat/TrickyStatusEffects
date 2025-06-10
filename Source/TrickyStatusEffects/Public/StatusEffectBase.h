@@ -131,6 +131,7 @@ public:
 	 * Updates the state of the status effect, including its timer, stacks,
 	 * and any additional effect logic defined in derived classes.
 	 */
+	UFUNCTION(BlueprintCallable, Category="StatusEffect")
 	void Refresh();
 
 	/**
@@ -138,6 +139,7 @@ public:
 	 *
 	 * @param Deactivator The actor responsible for deactivating the status effect. Can be nullptr
 	 */
+	UFUNCTION(BlueprintCallable, Category="StatusEffect")
 	void Deactivate(AActor* Deactivator);
 
 	/**
@@ -478,12 +480,21 @@ private:
 			EditCondition="bIsStackable && StacksBehavior == EStatusEffectStacksRefreshBehavior::Increase"))
 	int32 DeltaStacks = 1;
 
+	/**
+	 * Holds a reference to the target actor affected by the status effect.
+	 */
 	UPROPERTY(BlueprintGetter=GetTargetActor, Category="StatusEffect")
 	AActor* TargetActor = nullptr;
 
+	/**
+	 * Represents the actor responsible for initiating or applying the status effect.
+	 */
 	UPROPERTY(BlueprintGetter=GetInstigatorActor, Category="StatusEffect")
 	AActor* InstigatorActor = nullptr;
 
+	/**
+	 * Holds a reference to the owning Status Effects Manager Component.
+	 */
 	UPROPERTY(BlueprintGetter=GetOwningManager, Category="StatusEffect")
 	TObjectPtr<UStatusEffectsManagerComponent> OwningManager = nullptr;
 
