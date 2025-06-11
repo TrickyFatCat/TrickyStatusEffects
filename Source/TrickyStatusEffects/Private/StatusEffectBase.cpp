@@ -103,6 +103,28 @@ UWorld* UStatusEffectBase::GetTickableGameObjectWorld() const
 	return GetOuter()->GetWorld();
 }
 
+UWorld* UStatusEffectBase::GetWorld() const
+{
+	if (!IsValid(GetOuter()))
+	{
+		return nullptr;
+	}
+
+	UWorld* LocalWorld = Cast<UWorld>(GetOuter());
+
+	if (IsValid(LocalWorld))
+	{
+		return LocalWorld;
+	}
+
+	return GetOuter()->GetWorld();
+}
+
+bool UStatusEffectBase::ImplementsGetWorld() const
+{
+	return true;
+}
+
 bool UStatusEffectBase::Activate(UStatusEffectsManagerComponent* TargetManagerComponent, AActor* Instigator)
 {
 	if (!IsValid(TargetManagerComponent) || !IsValid(TargetManagerComponent->GetOwner()))

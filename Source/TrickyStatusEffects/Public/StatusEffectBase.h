@@ -116,6 +116,10 @@ public:
 	virtual ETickableTickType GetTickableTickType() const override;
 
 	virtual UWorld* GetTickableGameObjectWorld() const override;
+	
+	virtual UWorld* GetWorld() const override;
+
+	virtual bool ImplementsGetWorld() const override;
 
 	/**
 	 * Activates the status effect on the target manager component.
