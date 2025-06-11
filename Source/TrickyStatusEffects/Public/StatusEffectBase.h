@@ -8,6 +8,7 @@
 #include "Tickable.h"
 #include "StatusEffectBase.generated.h"
 
+class UWorld;
 class UStatusEffectsManagerComponent;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogStatusEffect, Log, All)
@@ -117,9 +118,13 @@ public:
 
 	virtual UWorld* GetTickableGameObjectWorld() const override;
 	
+#if WITH_ENGINE
 	virtual UWorld* GetWorld() const override;
 
+#if WITH_EDITOR
 	virtual bool ImplementsGetWorld() const override;
+#endif
+#endif
 
 	/**
 	 * Activates the status effect on the target manager component.

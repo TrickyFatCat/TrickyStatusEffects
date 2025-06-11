@@ -103,6 +103,7 @@ UWorld* UStatusEffectBase::GetTickableGameObjectWorld() const
 	return GetOuter()->GetWorld();
 }
 
+#if WITH_ENGINE
 UWorld* UStatusEffectBase::GetWorld() const
 {
 	if (!IsValid(GetOuter()))
@@ -120,10 +121,13 @@ UWorld* UStatusEffectBase::GetWorld() const
 	return GetOuter()->GetWorld();
 }
 
+#if WITH_EDITOR
 bool UStatusEffectBase::ImplementsGetWorld() const
 {
 	return true;
 }
+#endif
+#endif
 
 bool UStatusEffectBase::Activate(UStatusEffectsManagerComponent* TargetManagerComponent, AActor* Instigator)
 {
