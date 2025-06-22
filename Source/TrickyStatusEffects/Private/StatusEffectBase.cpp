@@ -175,13 +175,15 @@ bool UStatusEffectBase::Activate(UStatusEffectsManagerComponent* TargetManagerCo
 	FString TargetName, InstigatorName;
 	GetActorName(TargetActor, TargetName);
 	GetActorName(InstigatorActor, InstigatorName);
+	const FString DurationMessage = bIsInfinite ? TEXT("INFINITE") : FString::Printf(TEXT("%.2f sec"), Duration);
+	const FString StacksMessage = bIsStackable ? FString::Printf(TEXT("%d"), CurrentStacks) : TEXT("NO STACKS");
 	const FString Message = FString::Printf(
-		TEXT("%s activation success. Target: %s | Instigator: %s | Duration: %.2f sec | Stacks: %d"),
+		TEXT("%s activation success. Target: %s | Instigator: %s | Duration: %s | Stacks: %s"),
 		*GetName(),
 		*TargetName,
 		*InstigatorName,
-		Duration,
-		CurrentStacks);
+		*DurationMessage,
+		*StacksMessage);
 	PrintLog(Message);
 #endif
 	return true;

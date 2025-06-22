@@ -78,7 +78,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStacksDecreasedDynamicSignature,
 /**
  * Base class for status effects in the game.
  */
-UCLASS(Blueprintable, BlueprintType, Abstract, HideDropdown)
+UCLASS(Blueprintable, BlueprintType)
 class TRICKYSTATUSEFFECTS_API UStatusEffectBase : public UObject, public FTickableGameObject
 {
 	GENERATED_BODY()
